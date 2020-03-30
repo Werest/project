@@ -22,11 +22,18 @@ class RetailCRMCreateTestWorkINeedDoItController extends AbstractController
             $r = array(
                 "code" => "awesometransport-101",
                 "name" => "Awesome Transport",
-                "logo"=> "https://www.flaticon.com/premium-icon/icons/svg/2661/2661489.svg",
-                "clientId" => 10
+                "logo"=> "https://image.flaticon.com/icons/svg/1793/1793188.svg",
+                "clientId" => 10,
+                "active" => true
 
             );
-            $response = $client->request->integrationModulesEdit($r);
+            $client->request->integrationModulesEdit($r);
+
+            $active = $client->request->integrationModulesGet($code)->getResponse();
+
+            //2
+            $active = $active['integrationModule']['actions']['activity'];
+
         } catch (CurlException $e) {
             echo "Connection error: " . $e->getMessage();
         }
