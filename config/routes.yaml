@@ -5,3 +5,6 @@
 index:
   path: /r
   controller: App\Controller\RetailCRMCreateTestWorkINeedDoItController::index
+rarusha:
+  path: /rr
+  controller: App\Controller\RetailCRMCreateTestWorkINeedDoItController::ordersR

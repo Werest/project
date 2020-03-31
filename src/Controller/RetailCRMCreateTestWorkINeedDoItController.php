@@ -7,18 +7,23 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use RetailCrm\ApiClient;
 
-class RetailCRMCreateTestWorkINeedDoItController extends AbstractController
+class RetailCRMCreateTestWorkINeedDoItController
 {
+    public $url = 'https://weresttalk.retailcrm.ru/';
+    public $key = 'iuGaclQUT9vJruuDPFv56CZMVdd43nRE';
+    /**
+     * @var ApiClient
+     */
+    public $client;
+
+
     public function index()
     {
-        $url = 'https://weresttalk.retailcrm.ru/';
-        $key = 'iuGaclQUT9vJruuDPFv56CZMVdd43nRE';
-        $client = new ApiClient($url, $key);
-
-
+        $this->client = new ApiClient($this->url, $this->key);
 
         try {
             $code = 'consultant';
+            //1 - non DB
             $r = array(
                 "code" => "awesometransport-101",
                 "name" => "Awesome Transport",
@@ -27,12 +32,14 @@ class RetailCRMCreateTestWorkINeedDoItController extends AbstractController
                 "active" => true
 
             );
-            $client->request->integrationModulesEdit($r);
+            $this->client->request->integrationModulesEdit($r);
 
-            $active = $client->request->integrationModulesGet($code)->getResponse();
+            $active = $this->client->request->integrationModulesGet($code)->getResponse();
 
-            //2
+            //2 non DB
             $active = $active['integrationModule']['actions']['activity'];
+
+
 
         } catch (CurlException $e) {
             echo "Connection error: " . $e->getMessage();
@@ -44,4 +51,6 @@ class RetailCRMCreateTestWorkINeedDoItController extends AbstractController
             'controller_name' => 'RetailCRMCreateTestWorkINeedDoItController'
         ]);
     }
+
+
 }
