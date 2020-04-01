@@ -2,7 +2,9 @@
 
 namespace App\Command;
 
-use App\Controller\RetailCRMCreateTestWorkINeedDoItController;
+use App\Entity\TinyKangaroo;
+use Composer\Autoload\ClassLoader;
+use Doctrine\ORM\EntityManagerInterface;
 use RetailCrm\ApiClient;
 use RetailCrm\Exception\CurlException;
 use Symfony\Component\Console\Command\Command;
@@ -12,16 +14,22 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+
 class LookOrdersCommand extends Command
 {
-    public $url = 'https://weresttalk.retailcrm.ru/';
-    public $key = 'iuGaclQUT9vJruuDPFv56CZMVdd43nRE';
     /**
      * @var ApiClient
      */
     public $client;
 
     protected static $defaultName = 'LookOrders';
+
+    private $entityManager;
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+        parent::__construct();
+    }
 
     protected function configure()
     {
@@ -53,7 +61,13 @@ class LookOrdersCommand extends Command
     }
 
     protected function ordersR(){
-        $this->client = new ApiClient($this->url, $this->key);
+        $entM = $this->entityManager;
+        // for id = 1 - all in controller (RetailCRMCreateTestWorkINeedDoItController)
+        $rep = $entM->getRepository(TinyKangaroo::class)->find(1);
+        $url = $rep->getUrl();
+        $key = $rep->getK();
+
+        $this->client = new ApiClient($url, $key);
 
         $f = array(
             'orderMethods' => 'phone',
@@ -67,7 +81,7 @@ class LookOrdersCommand extends Command
             try {
                 $op = array(
                     'id' => $item['number'],
-                    'email' => 'weresttrade@yandex.ru',
+                    'email' => 'weresttrade@ya.com',
                     'managerComment'=> 'Комлектация началась ' . $item['statusUpdatedAt']
                 );
                 $this->client->request->ordersEdit($op, $by='id');
